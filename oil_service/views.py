@@ -10,7 +10,8 @@ from .models import (
     ClientsTableModel,
     CitiesModel,
     ClubsModel,
-    CarModelsModel
+    CarModelsModel,
+    DiscountsModel
 )
 
 
@@ -24,6 +25,7 @@ def client_view(request):
 
 
 def insert_data_view(request):
+    queryset_model = None
     if request.method == 'POST':
         if request.POST.get('first_name') and \
                 request.POST.get('last_name') and \
@@ -31,24 +33,41 @@ def insert_data_view(request):
                 request.POST.get('email') and \
                 request.POST.get('car_number') and \
                 request.POST.get('city_name') and \
-                request.POST.get('club_name') and \
-                request.POST.get('phone_number') and \
-                request.POST.get('phone_number') and \
-                request.POST.get('phone_number'):
+                request.POST.get('club') and \
+                request.POST.get('car_brand_name') and \
+                request.POST.get('car_model') and \
+                request.POST.get('discount'):
+
+            brand = request.POST.get('car_brand_name')
+            model = request.POST.get('car_model')
+
             table = ClientsTableModel()
-            table.car_brand_name = request.POST.get('first_name')
+            table.first_name = request.POST.get('first_name')
+            table.last_name = request.POST.get('last_name')
+            table.phone_number = request.POST.get('phone_number')
+            table.email = request.POST.get('email')
+            table.car_number = request.POST.get('car_number')
+            table.city = request.POST.get('city_name')
+            table.club = request.POST.get('club')
+            table.car_model = request.POST.get('car_model')
+            table.discount = request.POST.get('discount')
+
             try:
                 table.save()
-                messages.success(request, 'Марка авто {} успешно сохранена'.format(table.car_brand_name))
+                messages.success(request, 'Марка авто {} успешно сохранена'.format(table.first_name, table.last_name))
             except IntegrityError:
-                messages.error(request, '(!!!!!) МАРКА АВТО {} УЖЕ СУЩЕСТВУЕТ(!!!!!)'.format(table.car_brand_name))
+                messages.error(request, '(!!!!!) МАРКА АВТО {} УЖЕ СУЩЕСТВУЕТ(!!!!!)'.format(table.first_name,
+                                                                                             table.last_name))
             finally:
                 return render(request, 'oil_service/insert.html')
     else:
         clubs = ClubsModel.objects.all()
         cities = CitiesModel.objects.all()
+        car_models = CarModelsModel.objects.all()
         car_brands = CarBrandsModel.objects.all()
-        context = {'cities': cities, 'clubs': clubs, 'car_brands': car_brands}
+        discounts = DiscountsModel.objects.all()
+        context = {'cities': cities, 'clubs': clubs, 'car_brands': car_brands, 'car_models': car_models,
+                   'discounts': discounts}
         return render(request, 'oil_service/insert.html', context=context)
 
 

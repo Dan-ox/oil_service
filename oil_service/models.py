@@ -90,3 +90,10 @@ class CarBrandsModel(models.Model):
 
     class Meta:
         db_table = u'"oil\".\"car_brands"'
+
+
+class DiscountsModel(models.Model):
+    amount = models.IntegerField()
+
+    class Meta:
+        db_table = u'"oil\".\"discounts"'
